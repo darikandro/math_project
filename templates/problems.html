@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Задачи - MathMind</title>
+    <h1>Список заданий:</h1>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Задача</th>
+                <th>Уровень сложности</th>
+                <th>Тема</th>
+                <th>Дата добавления</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.difficulty_label }}</td>
+                <td>{{ task.topic }}</td>
+                <td>{{ task.created_at }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
