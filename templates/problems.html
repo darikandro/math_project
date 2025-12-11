@@ -9,6 +9,7 @@
     <table>
         <thead>
             <tr>
+                <th>Номер</th>
                 <th>Задача</th>
                 <th>Уровень сложности</th>
                 <th>Тема</th>
@@ -18,7 +19,8 @@
         <tbody>
             {% for task in tasks %}
             <tr>
-                <td>{{ task.title }}</td>
+                <td>{{ task.id }}</td>
+                <td><a href="http://127.0.0.1:5000/problems/task/{{ task.id }}">{{ task.title }}</a></td>
                 <td>{{ task.difficulty_label }}</td>
                 <td>{{ task.topic }}</td>
                 <td>{{ task.created_at }}</td>
