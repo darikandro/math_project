@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ current_lang }}">
 <head>
     <meta charset="UTF-8">
-    <title>Задачи - MathMind</title>    
+    <title>{{ t["tasks"] }} - MathMind</title>  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <script>       /* подключение MathJax для обработки формул*/
+        window.MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
 </head> 
 <body> 
-    <h1>{{ task.id }}. {{ task.title }}</h1>
-    <p>{{ task.description }}</p>
+    <div>
+        <h1>{{ task.id }}. {{ task.title }}</h1>
+        <p>{{ task.description }}</p>
+
+        <form action="give-answer" method="post">
+            <input type="text" name="answer" placeholder="Ответ">
+            <button type="submit">Отправить ответ</button>
+        </form>
+
+    </div>
+
 </body>
 </html>

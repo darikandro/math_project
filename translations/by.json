@@ -1,0 +1,16 @@
+{
+    "welcom_message": "Вітаем на MathMind!",
+    "welcom_text": "Вучыся матэматыцы разам з намі!",
+    "tasks_list": "Спіс заданняў",
+    "language": "Мова",
+    "tasks": "Задачы",
+
+    "table": {
+        "number": "Нумар",
+        "task": "Задача",
+        "difficulty": "Узровень складанасці",
+        "topic": "Тэма",
+        "date_added": "Дата дадання"
+    }
+    
+}

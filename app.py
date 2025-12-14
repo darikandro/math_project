@@ -1,11 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy import create_engine
 from models import Tasks, Topics
 from sqlalchemy.orm import Session
 from db_setup import db, migrate
+from translations.translations import get_translation
+
 
 def main():
     app = Flask(__name__)
+    app.secret_key = 'very-secret-key' #ключ для сессии фласка
     app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:fk_kbkEz33@localhost/math"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -15,6 +18,18 @@ def main():
     @app.route('/')
     def index():
         return render_template('index.html')
+    
+    @app.context_processor
+    def inject_translations():
+        t, current_lang = get_translation()
+        return dict(t=t, current_lang=current_lang)
+    
+    @app.route('/set-language', methods=['POST'])
+    def set_language():
+        lang = request.form.get('lang')
+        if lang in ('ru', 'by'):
+            session['lang'] = lang
+        return redirect(request.referrer or url_for('index'))
 
     @app.route('/problems/')
     def problems_list():

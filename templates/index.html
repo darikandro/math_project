@@ -1,12 +1,39 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ current_lang }}">
 <head>
     <meta charset="UTF-8">
     <title>MathMind</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Добро пожаловать на MathMind!</h1>
-    <h2>Научись решать математические задачи с нами!</h2>
-    <a href="http://127.0.0.1:5000/problems/" class="button">Список задач</a>
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="lang-button">
+                <form method="post" action="/set-language">
+                    <label>
+                        {{ t["language"] }}
+                        <select name="lang" onchange="this.form.submit()">
+                            <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
+                            <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
+                        </select>
+                    </label>
+                </form>
+            </div>
+
+            <h1>{{ t["welcom_message"] }}</h1>
+            <h2>{{ t["welcom_text"] }}</h2>
+        </div>
+
+        <div class="content">
+            <a href="http://127.0.0.1:5000/problems/" class="button" style="font-size: 30px;">{{ t["tasks_list"] }}</a>
+        </div>
+
+        <div class="footer">
+
+        </div>
+        
+        
+    </div>
+
 </body>
 </html>
