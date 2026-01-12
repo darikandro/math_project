@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ t["tasks"] }} - MathMind</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="lang-button">
+            <form method="post" action="/set-language">
+                <label>
+                    {{ t["language"] }}
+                    <select name="lang" onchange="this.form.submit()">
+                        <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
+                        <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
+                    </select>
+                </label>
+            </form>
+        </div>
+
+        <a href="{{ url_for('main.index') }}">{{ t["main"] }}</a>
+
+    </div>
+
+
+    <h1>{{ t["tasks_list"] }}:</h1>
+
+    <form method="get" class="filters">
+        <label>
+            {{ t.table["topic"] }}: 
+            <select name="topic">
+                <option value="">{{ t["all_topics"] }}</option>
+                
+                {% for topic in topics %}
+                    <option value="{{ topic.name }}"
+                        {% if topic.name == current_topic %}selected{% endif %}>
+                        {{ topic.title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <input type="hidden" name="sort" value="{{ current_sort }}">
+        <input type="hidden" name="order" value="{{ current_order }}">
+
+        <button type="submit">
+            {{ t["apply"] }}
+        </button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th><a href="{{ url_for('problems.problems_list', sort='id', order='asc' 
+                            if current_sort == 'id' and current_order == 'desc' 
+                            else 'desc', topic=current_topic) }}">
+                    {{ t.table["number"] }}
+                    {% if current_sort == 'id' %}
+                        {{ '↑' if current_order == 'asc' else '↓' }}
+                    {% endif %}                       
+                    </a>
+                </th>
+                <th>{{ t.table["task"] }}</th>
+                <th><a href="{{ url_for('problems.problems_list', sort='difficulty', order='asc' 
+                            if current_sort == 'difficulty' and current_order == 'desc' 
+                            else 'desc', topic=current_topic) }}">
+                    {{ t.table["difficulty"] }}
+                    {% if current_sort == 'difficulty' %}
+                        {{ '↑' if current_order == 'asc' else '↓' }}
+                    {% endif %}
+                    </a>
+                </th>
+                <th><a href="{{ url_for('problems.problems_list', sort='topic', order='asc' 
+                            if current_sort == 'topic' and current_order == 'desc' 
+                            else 'desc') }}">
+                    {{ t.table["topic"] }}
+                    {% if current_sort == 'topic' %}
+                        {{ '↑' if current_order == 'asc' else '↓' }}
+                    {% endif %}
+                    </a>
+                </th>
+                <th><a href="{{ url_for('problems.problems_list', sort='created_at', order='asc' 
+                            if current_sort == 'created_at' and current_order == 'desc' 
+                            else 'desc', topic=current_topic) }}">
+                    {{ t.table["created_at"] }}
+                    {% if current_sort == 'created_at' %}
+                        {{ '↑' if current_order == 'asc' else '↓' }}
+                    {% endif %}
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.id }}</td>
+                    <td><a href="{{ url_for('problems.show_task', title=task.name) }}">{{ task.title }}</a></td>
+                    <td>{{ t["difficulty"] [task.difficulty_key] }}</td>               
+                    <td>{{ task.topic }}</td>
+                    <td>{{ task.created_at.date().strftime("%d.%m.%Y") }}</td>    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

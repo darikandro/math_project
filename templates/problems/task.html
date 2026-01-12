@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ t["tasks"] }} - MathMind</title>  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <script>       /* подключение MathJax для обработки формул*/
+        window.MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+</head> 
+<body> 
+
+    <div class="header">
+        <div class="lang-button">
+            <form method="post" action="/set-language">
+                <label>
+                    {{ t["language"] }}
+                    <select name="lang" onchange="this.form.submit()">
+                        <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
+                        <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
+                    </select>
+                </label>
+            </form>
+        </div>
+
+        <a href="{{ url_for('main.index') }}">{{ t["main"] }}</a>
+
+    </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, path in messages %}
+        <div class="flash {{ category }}">
+            {{ t[path[0]][path[1]] }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div>
+        <h1>{{ task.id }}. {{ task_tr.title }}</h1>
+        <p>{{ task_tr.description }}</p>
+
+        <form action={{ url_for('problems.give_answer', title=task.title) }} method="post">
+            <input type="text" name="answer" placeholder="{{ t["answer"] }}">
+            <button type="submit">{{ t["send_answer"] }}</button>
+        </form>
+
+    </div>
+
+
+
+</body>
+</html>

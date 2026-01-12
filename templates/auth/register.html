@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ t.user["register"] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <div class="header">
+        <div class="lang-button">
+            <form method="post" action="/set-language">
+                <label>
+                    {{ t["language"] }}
+                    <select name="lang" onchange="this.form.submit()">
+                        <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
+                        <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
+                    </select>
+                </label>
+            </form>
+        </div>
+
+        <a href="{{ url_for('main.index') }}">{{ t["main"] }}</a>
+
+    </div>
+
+    <form method="post">
+        <input type="text" name="username" placeholder="{{ t.user["login"] }}">
+        <input type="password" name="password" placeholder="{{ t.user["password"] }}">    
+        <button type="submit">{{ t.user["register"] }}</button> 
+    </form>
+</body>
+</html>

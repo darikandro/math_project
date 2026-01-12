@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Add_task</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_task.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="lang-button">
+            <form method="post" action="/set-language">
+                <label>
+                    {{ t["language"] }}
+                    <select name="lang" onchange="this.form.submit()">
+                        <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
+                        <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
+                    </select>
+                </label>
+            </form>
+        </div>
+
+        <a href="{{ url_for('main.index') }}">{{ t["main"] }}</a>
+
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, path in messages %}
+        <div class="flash {{ category }}">
+            {{ t[path[0]][path[1]] }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="post" class="task-form">
+
+        <!-- Два столбца: RU / BY -->
+        <div class="lang-grid">
+
+            <div class="lang-column">
+                <h3>RU</h3>
+
+                <label>{{ t.add_task["name"] }}</label>
+                <input type="text" name="title_ru" required>
+
+                <label>{{ t.add_task["description"] }}</label>
+                <textarea name="content_ru" rows="5" required></textarea>
+            </div>
+
+            <div class="lang-column">
+                <h3>BY</h3>
+
+                <label>{{ t.add_task["name"] }}</label>
+                <input type="text" name="title_by" required>
+
+                <label>{{ t.add_task["description"] }}</label>
+                <textarea name="content_by" rows="5" required></textarea>
+            </div>
+
+        </div>
+
+        <!-- Остальные поля -->
+        <div class="center-fields">
+
+            <label>{{ t.add_task["slug"] }}</label>
+            <input type="text" name="slug" required>
+
+            <label>{{ t.add_task["answer"] }}</label>
+            <input type="text" name="answer" required>
+
+            <label>{{ t.add_task["topic"] }}</label>
+            <select name="topic_id" required>
+                {% for topic in topics %}
+                <option value="{{ topic.id }}">{{ topic.title }}</option>
+                {% endfor %}
+            </select>
+
+            <label>{{ t.add_task["difficulty"] }}</label>
+            <select name="difficulty" required>
+                {% for i in range(1, 11) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="submit-btn">{{ t.add_task["add_task"] }}</button>
+
+        </div>
+
+    </form>
+
+
+</body>
+</html>

@@ -1,9 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from sqlalchemy import create_engine
-from models import Tasks, Topics
+from flask import Flask, g, render_template, request, redirect, session
 from sqlalchemy.orm import Session
+
 from db_setup import db, migrate
-from translations.translations import get_translation
+from modules.auth.controllers import auth_bp
+from modules.auth.models import User
+from modules.lang.controllers import lang_bp, inject_translations
+from modules.problems.controllers import problems_bp
+from modules.main.controllers import main_bp
+from modules.admin.controllers import admin_bp
+from utils.greetings import say_hello
 
 
 def main():
@@ -15,39 +20,29 @@ def main():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    @app.route('/')
-    def index():
-        return render_template('index.html')
-    
+    app.register_blueprint(auth_bp) 
+    app.register_blueprint(lang_bp) 
+    app.register_blueprint(problems_bp) 
+    app.register_blueprint(main_bp) 
+    app.register_blueprint(admin_bp) 
+
+
+    app.context_processor(inject_translations)
+
+    @app.before_request  # срабатывает перед каждым запросом
+    def load_user():
+        user_id = session.get('user_id')
+        g.user = User.query.get(user_id) if user_id else None  # g - сохранение в глобальную переменную проекта
+
+
     @app.context_processor
-    def inject_translations():
-        t, current_lang = get_translation()
-        return dict(t=t, current_lang=current_lang)
-    
-    @app.route('/set-language', methods=['POST'])
-    def set_language():
-        lang = request.form.get('lang')
-        if lang in ('ru', 'by'):
-            session['lang'] = lang
-        return redirect(request.referrer or url_for('index'))
-
-    @app.route('/problems/')
-    def problems_list():
-        tasks = Tasks.query.all()
-        return render_template('problems.html', tasks=tasks)
-
-    @app.route('/problems/topic/<topic_id>')
-    def problems_list_for_topics(topic_id):
-        tasks = Tasks.query.filter(Tasks.topic_id == topic_id).all()
-        return render_template('problems.html', tasks=tasks)
-    
-    @app.route('/problems/task/<int:task_id>')
-    def show_task(task_id):
-        task = Tasks.query.get(task_id)
-        return render_template('task.html', task=task)
+    def inject_greeting():
+        return {"random_greeting": say_hello()}
     
     return app
+
 
 if __name__ == '__main__':
     app = main()
     app.run(debug=True)
+    
