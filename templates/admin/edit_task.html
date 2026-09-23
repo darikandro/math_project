@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block title %}
-Add_task
+Edit_task
 {% endblock %}
 
 {% block body %}
@@ -18,46 +18,49 @@ Add_task
                 <h3>RU</h3>
 
                 <label>{{ t.add_task["name"] }}</label>
-                <input type="text" name="title_ru" required autocomplete="off">
+                <input type="text" name="title_ru" value="{{ task_ru.title }}" required autocomplete="off">
 
                 <label>{{ t.add_task["description"] }}</label>
-                <textarea name="content_ru" rows="5" required></textarea>
+                <textarea name="content_ru" rows="5" required>{{ task_ru.description }}</textarea>
             </div>
 
             <div class="lang-column">
                 <h3>BY</h3>
 
                 <label>{{ t.add_task["name"] }}</label>
-                <input type="text" name="title_by" required autocomplete="off">
+                <input type="text" name="title_by" value="{{ task_by.title }}" required autocomplete="off">
 
                 <label>{{ t.add_task["description"] }}</label>
-                <textarea name="content_by" rows="5" required></textarea>
+                <textarea name="content_by" rows="5" required>{{ task_by.description }}</textarea>
             </div>
 
         </div>
 
         <!-- Остальные поля -->
         <div class="center-fields">
+
+            <label>Slug</label>
+            <input type="text" name="slug" value="{{ task.title }}" required autocomplete="off">
+
             <label>{{ t.add_task["answer"] }}</label>
-            <input type="text" name="answer" required autocomplete="off">
+            <input type="text" name="answer" value="{{ task.answer }}" required autocomplete="off">
 
             <label>{{ t.add_task["topic"] }}</label>
             <select name="topic_id" required>
                 {% for topic in topics %}
-                <option value="{{ topic.id }}">{{ topic.title }}</option>
+                <option value="{{ topic.id }}"
+                    {% if topic.id == task.topic_id %}selected{% endif %}>
+                    {{ topic.title }}
+                </option>
                 {% endfor %}
             </select>
 
             <label>{{ t.add_task["difficulty"] }}</label>
-            <select name="difficulty" required>
-                {% for i in range(1, 11) %}
-                <option value="{{ i }}">{{ i }}</option>
-                {% endfor %}
-            </select>
+            <input type="number" name="difficulty" value="{{ task.difficulty }}"required >
 
-            <button type="submit" class="submit-btn">{{ t.add_task["add_task"] }}</button>
+
+            <button type="submit" class="submit-btn">{{ t.add_task["save"] }}</button>
 
         </div>
-
     </form>
 {% endblock %}

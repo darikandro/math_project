@@ -1,6 +1,8 @@
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 
+from db_setup import db
 from modules.problems.models import Tasks, Topics, TaskTranslation, TopicTranslation
+from modules.auth.models import SolvedTasks
 from utils.tasks_utils import difficulty_key
 from utils.translation_utils import get_current_lang, get_translation_db
 from utils.access_utils import login_required
@@ -12,6 +14,17 @@ problems_bp = Blueprint('problems', __name__)
 @problems_bp.route('/problems/')
 def problems_list():
     lang = get_current_lang()
+
+    edit_mode = False
+
+    if g.user and g.user.status == "admin":
+        edit_mode = request.args.get('edit', '0') == 'admin'
+
+    if g.user:
+        solved_tasks_ids = {s.task_id for s in g.user.solved_tasks.all()}
+
+    else:
+        solved_tasks_ids = None
 
     sort = request.args.get("sort", "id")
     order = request.args.get("order", "asc")
@@ -56,13 +69,8 @@ def problems_list():
     if sort in sort_map:
         result.sort(key=sort_map[sort], reverse=(order == "desc"))
 
-    return render_template('problems/list.html', tasks=result, topics=topics, current_sort=sort, current_order=order, current_topic=topic_filter)
-
-
-#@problems_bp.route('/problems/topic/<topic_id>')
-#def problems_list_for_topics(topic_id):
-#    tasks = Tasks.query.filter(Tasks.topic_id == topic_id).all()
-#    return render_template('problems.html', tasks=tasks)
+    return render_template('problems/list.html', tasks=result, topics=topics, current_sort=sort, 
+                           current_order=order, current_topic=topic_filter, edit_mode=edit_mode, solved_tasks_ids=solved_tasks_ids)
 
 
 @problems_bp.route('/problems/<title>')
@@ -82,6 +90,13 @@ def give_answer(title):
 
     if given_answer == correct_answer:
         flash(("flash_message", "correct"), "success")
+        already_solved = SolvedTasks.query.filter_by(user_id=g.user.id, task_id=task.id).first()
+
+        if not already_solved:
+            solved = SolvedTasks(user_id=g.user.id, task_id=task.id)
+            db.session.add(solved)
+            db.session.commit()
+
     else:
         flash(("flash_message", "wrong") ,"error")
 

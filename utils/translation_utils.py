@@ -28,9 +28,7 @@ def translate(key):
 
 
 def get_translation_db(obj, lang, fallback=default_lang): #перевод из бд
-    tr = obj.translations.filter_by(lang=lang).first()
-
-    if not tr and fallback:
-        tr = obj.translations.filter_by(lang=fallback).first()
-
-    return tr
+    for tr in obj.translations:
+        if tr.lang == lang:
+            return tr
+    return None

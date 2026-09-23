@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+        rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block links %} {% endblock %}
+    <title>{% block title %} MathMind {% endblock %}</title>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container d-flex align-items-center justify-content-between gap-3">
+            <form method="post" action="/set-language" class="d-flex align-items-center gap-2">
+                <label class="text-white small mb-0">
+                    {{ t["language"] }}
+                    <select name="lang" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
+                        <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
+                    </select>
+                </label>
+            </form>
+
+            <nav class="d-flex gap-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-light btn-sm">
+                    {{ t["main"] }}
+                </a>
+                <a href="{{ url_for('problems.problems_list') }}" class="btn btn-light btn-sm">
+                    {{ t["tasks_list"] }}
+                </a>
+            </nav>
+
+            <div class="d-flex align-items-center gap-2 text-white">
+                {% if g.user %}
+                    <span>
+                        {{ random_greeting }}, <a href="{{ url_for('auth.profile') }}" class="profile-link">{{ g.user.username }}</a>!
+                    </span>
+                     <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm">{{ t.user["exit"] }}</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-sm">{{ t.user["enter"] }}</a>
+                {% endif %}
+            </div>
+
+            {% if g.user and g.user.status == "admin" %}
+            <div class="admin-menu">
+                <button class="btn btn-warning btn-sm admin-btn">{{ t.admin_users["management"] }}</button>
+                <div class="dropdown-menu-custom">
+                    <a href="{{ url_for('admin.users') }}">{{ t.admin_users["users"] }}</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </header>
+
+    {% set bs_map = {
+        'error': 'danger',
+        'success': 'success',
+        'warning': 'warning',
+        'message': 'info'
+    } %}
+
+    <div class="flash-wrapper d-flex justify-content-center">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, path in messages %}
+        <div class="alert alert-{{ bs_map.get(category, category) }} alert-dismissible fade show text-center w-50" role="alert">
+                {{ t[path[0]][path[1]] }}
+            <button 
+                type="button" class="btn-close" data-bs-dismiss="alert">
+            </button>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+    </div>
+
+    {% block body %} {% endblock %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const alerts = document.querySelectorAll('.alert');
+
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                bootstrap.Alert.getOrCreateInstance(alert).close();
+            }, 2000);
+        });
+    });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+    </script>
+</body>
+</html>

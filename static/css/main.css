@@ -1,0 +1,150 @@
+/* Общая структура */
+body {
+    background-color: aliceblue;
+}
+
+.main-wrapper {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+}
+
+/* Хедер */
+.site-header {
+    background-color: cornflowerblue;
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+/* Ссылка на профиль */
+.profile-link {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.profile-link:hover {
+    color: #eaeaea;
+}
+
+/* Админское меню */
+.admin-menu {
+    position: relative;
+}
+
+.dropdown-menu-custom {
+    display: none;
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    min-width: 160px;
+    z-index: 1000;
+}
+
+.dropdown-menu-custom a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown-menu-custom a:hover {
+    background-color: #f1f1f1;
+}
+
+.admin-menu:hover .dropdown-menu-custom {
+    display: block;
+}
+
+.home-page {
+    max-width: 700px;
+}
+
+.task-page {
+    max-width: 800px;
+    width: 100%;
+}
+
+.task-description {
+    font-size: 1.1rem;
+}
+
+.tasks-page {
+    max-width: 800px;
+    width: 100%;
+}
+
+.topics-page {
+    width: 100%;
+}
+
+/* Универсальный центр-контейнер */
+.centered-box {
+    margin: 0 auto;
+    /*text-align: center; */
+}
+
+/* Для форм внутри центрированных блоков */
+.centered-box form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.centered-table table {
+    margin: 0 auto;
+}
+
+.filters-inner {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.centered-table {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.centered-table .btn {
+    display: inline-flex;      /* кнопки в ряд */
+    margin-right: 0.5rem;      /* промежуток между кнопками */
+}
+
+.centered-table .btn:last-child {
+    margin-right: 0;           /* последняя кнопка без лишнего отступа */
+}
+
+.auth-box {
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.auth-box .form-control {
+    text-align: center;
+}
+
+.centered-table-wrapper {
+    max-width: 1800px; /* ширина таблицы */
+    margin: 0 auto;    /* центрирование */
+    overflow-x: auto;  /* горизонтальный скролл, если совсем узко */
+}
+
+.centered-table-wrapper td .btn {
+    display: inline-block !important; /* чтобы точно в ряд */
+    margin-right: 0.5rem;
+    margin-bottom: 0;                 /* убираем перенос */
+}

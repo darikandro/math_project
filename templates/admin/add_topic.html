@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block links %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.add_task.css') }}">
+{% endblock %}
+
+{% block title %}
+Add_topic
+{% endblock %}
+
+{% block body %}
+    <form method="post" class="task-form">
+        <div class="center-fields">
+            <label>ru</label>
+            <input type="text" name="title_ru" required autocomplete="off">
+
+            <label>by</label>
+            <input type="text" name="title_by" required autocomplete="off">
+
+            <button type="submit" class="submit-btn">Добавить</button>
+        </div>
+    </form>
+{% endblock %}

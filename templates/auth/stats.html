@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Statistics
+{% endblock %}
+
+{% block body %}
+<div class="stats-page centered-box">
+
+    <p class="mb-3">
+        {{ t.user["solved_amount"] }}: {{ total }}
+    </p>
+
+    <div class="table-responsive centered-table">
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>{{ t.table["number"] }}</th>
+                    <th>{{ t.add_task["name"] }}</th>
+                    <th>{{ t.add_task["topic"] }}</th>
+                    <th>{{ t.add_task["difficulty"] }}</th>
+                    <th>{{ t.table["solved_at"] }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in solved %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.title }}</td>
+                    <td>{{ s.topic }}</td>
+                    <td>{{ s.difficulty }}</td>
+                    <td>{{ s.solved_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

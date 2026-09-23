@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Topics
+{% endblock %}
+
+{% block body %}
+<div class="topics-page centered-box">
+
+    <h1 class="mb-4">{{ t.edit_task["topics_list"] }}</h1>
+
+    <a href="{{ url_for('admin.add_topic') }}"
+       class="btn btn-success mb-3">
+        {{ t.edit_task["add_topic"] }}
+    </a>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>slug</th>
+                    <th>ru</th>
+                    <th>by</th>
+                    <th>{{ t.edit_task["actions"] }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for topic in topics %}
+                <tr>
+                    <td>{{ topic.id }}</td>
+                    <td>{{ topic.slug }}</td>
+                    <td>{{ topic.ru }}</td>
+                    <td>{{ topic.by }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.edit_topic', topic_id=topic.id) }}">
+                            {{ t.edit_task["edit"] }}
+                        </a>
+                        |
+                        <a href="{{ url_for('admin.delete_topic', topic_id=topic.id) }}"
+                           onclick="return confirm('{{ t["confirm_delete"] }}')">
+                            {{ t.admin_users["delete"] }}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

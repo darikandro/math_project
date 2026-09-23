@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block links %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.add_task.css') }}">
+{% endblock %}
+
+{% block title %}
+Edit_topic
+{% endblock %}
+
+{% block body %}
+    <form method="post" class="task-form">
+        <div class="center-fields">
+            <label>ru</label>
+            <input type="text" name="title_ru" required value="{{ title_ru }}">
+
+            <label>by</label>
+            <input type="text" name="title_by" required value="{{ title_by }}">
+
+            <label>slug</label>
+            <input type="text" name="slug" required value="{{ topic.name }}">
+
+            <button type="submit" class="submit-btn">{{ t.add_task["save"] }}</button>
+        </div>
+    </form>
+{% endblock %}

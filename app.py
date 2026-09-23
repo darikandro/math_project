@@ -1,5 +1,8 @@
+import os
+
 from flask import Flask, g, render_template, request, redirect, session
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
 
 from db_setup import db, migrate
 from modules.auth.controllers import auth_bp
@@ -11,10 +14,12 @@ from modules.admin.controllers import admin_bp
 from utils.greetings import say_hello
 
 
+load_dotenv()
+
 def main():
     app = Flask(__name__)
-    app.secret_key = 'very-secret-key' #ключ для сессии фласка
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:fk_kbkEz33@localhost/math"
+    app.secret_key = os.environ.get('FLASK_SECRET_KEY') #ключ для сессии фласка
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL')
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)

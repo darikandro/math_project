@@ -1,64 +1,15 @@
-<!DOCTYPE html>
-<html lang="{{ current_lang }}">
-<head>
-    <meta charset="UTF-8">
-    <title>MathMind</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <div class="main-wrapper">
-        <div class="header">
-            <div class="lang-button">
-                <form method="post" action="/set-language">
-                    <label>
-                        {{ t["language"] }}
-                        <select name="lang" onchange="this.form.submit()">
-                            <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
-                            <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
-                        </select>
-                    </label>
-                </form>
-            </div>
+{% extends "layout.html" %}
 
-            <div>
+{% block title %}MathMind{% endblock %}
 
-                {% if g.user %}
-                    {{ random_greeting }}, <a href="{{ url_for('auth.profile') }}">{{ g.user.username }}</a>!
-                    <a href="{{ url_for('auth.logout') }}">{{ t.user["exit"] }}</a>
-                {% else %}
-                    <a href="{{ url_for('auth.login') }}" class="button">{{ t.user["enter"] }}</a>
-                {% endif %}
-            </div>
+{% block body %}
+<div class="home-page centered-box" align="center">
+    <h1 class="mb-3">{{ t["welcom_message"] }}</h1>
+    <h2 class="mb-4 text-muted">{{ t["welcom_text"] }}</h2>
 
-            {% if g.user and g.user.status == "admin" %}
-            <div class="admin-menu">
-                <button class="admin-btn">Управление</button>
-                <div class="dropdown">
-                    <a href="{{ url_for('admin.users') }}">Пользователи</a>
-                    <div class="submenu">
-                        <span class="submenu-title">Задания ►</span>
-                        <div class="submenu-content">
-                            <a href="{{ url_for('admin.add_task') }}">Добавить</a>
-                            <a href="{{ url_for('admin.edit_problems') }}">Редактировать</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="content">
-            <h1>{{ t["welcom_message"] }}</h1>
-            <h2>{{ t["welcom_text"] }}</h2>
-            <a href="{{ url_for('problems.problems_list') }}" class="button" style="font-size: 30px;">{{ t["tasks_list"] }}</a>
-        </div>
-
-        <div class="footer">
-
-        </div>
-        
-        
-    </div>
-
-</body>
-</html>
+    <a href="{{ url_for('problems.problems_list') }}"
+       class="btn btn-primary btn-lg">
+        {{ t["tasks_list"] }}
+    </a>
+</div>
+{% endblock %}

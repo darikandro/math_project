@@ -1,11 +1,53 @@
-<!DOCTYPE html>
-<html lang="{{ current_lang }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>Здесь будет редактирование юзеров</p>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block links %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.users.css') }}">
+{% endblock %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block body %}
+    <h1 class="title">{{ t.admin_users["users"] }}</h1>
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>
+                    <span class="status {{ user.status }}">
+                        {{ user.status }}
+                    </span>
+                </td>
+                <td class="actions">
+                    <a class="btn" href="{{ url_for('admin.change_user_status', user_id=user.id) }}">
+                        {% if user.status == "admin" %}
+                            {{ t.admin_users["make"] }} user
+                        {% else %}
+                            {{ t.admin_users["make"] }} admin
+                        {% endif %}
+                    </a>
+
+                    {% if user.status != 'admin' %}
+                        <a class="btn btn-danger" href="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                            onclick="return confirm('{{ t["confirm_delete"] }}')">
+                                {{ t.admin_users["delete"] }}
+                        </a>
+                        {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

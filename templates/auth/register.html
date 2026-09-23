@@ -1,33 +1,29 @@
-<!DOCTYPE html>
-<html lang="{{ current_lang }}">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ t.user["register"] }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
+{% extends "layout.html" %}
 
-    <div class="header">
-        <div class="lang-button">
-            <form method="post" action="/set-language">
-                <label>
-                    {{ t["language"] }}
-                    <select name="lang" onchange="this.form.submit()">
-                        <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
-                        <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
-                    </select>
-                </label>
-            </form>
-        </div>
+{% block title %}
+{{ t.user["register"] }}
+{% endblock %}
 
-        <a href="{{ url_for('main.index') }}">{{ t["main"] }}</a>
+{% block body %}
+<div class="auth-page centered-box">
+    <p class="mb-3" align="center">
+        {{ t.user_message["register"] }}
+    </p>
+    <div class="auth-box">
+    <form method="post" class="auth-form">
+        <input type="text" name="username"
+               class="form-control mb-2"
+               placeholder="{{ t.user["login"] }}" autocomplete="off">
 
+        <input type="password" name="password"
+               class="form-control mb-3"
+               placeholder="{{ t.user["password"] }}" autocomplete="off">
+
+        <button type="submit" class="btn btn-success">
+            {{ t.user["register"] }}
+        </button>
+    </form>
     </div>
 
-    <form method="post">
-        <input type="text" name="username" placeholder="{{ t.user["login"] }}">
-        <input type="password" name="password" placeholder="{{ t.user["password"] }}">    
-        <button type="submit">{{ t.user["register"] }}</button> 
-    </form>
-</body>
-</html>
+</div>
+{% endblock %}

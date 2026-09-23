@@ -1,107 +1,177 @@
-<!DOCTYPE html>
-<html lang="{{ current_lang }}">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ t["tasks"] }} - MathMind</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <div class="header">
-        <div class="lang-button">
-            <form method="post" action="/set-language">
-                <label>
-                    {{ t["language"] }}
-                    <select name="lang" onchange="this.form.submit()">
-                        <option value="ru" {% if current_lang=="ru" %}selected{% endif %}>Русский</option>
-                        <option value="by" {% if current_lang=="by" %}selected{% endif %}>Беларуская</option>
-                    </select>
-                </label>
-            </form>
-        </div>
+{% extends "layout.html" %}
 
-        <a href="{{ url_for('main.index') }}">{{ t["main"] }}</a>
+{% block title %}
+{{ t["tasks"] }} - MathMind
+{% endblock %}
 
+{% block body %}
+<div class="tasks-page centered-box">
+
+    <h1 class="mb-4" align="center">{{ t["tasks_list"] }}</h1>
+
+    {% if g.user and g.user.status == "admin" %}
+    <div class="admin-actions mb-3">
+        {% if not edit_mode %}
+            <a href="{{ url_for('problems.problems_list', edit='admin') }}"
+               class="btn btn-warning btn-sm">
+                {{ t.edit_task["edit_mode"] }}
+            </a>
+        {% else %}
+            <a href="{{ url_for('problems.problems_list') }}"
+               class="btn btn-secondary btn-sm">
+                {{ t.edit_task["esc_edit"] }}
+            </a>
+            <a href="{{ url_for('admin.add_task') }}"
+               class="btn btn-success btn-sm">
+                {{ t.edit_task["add_task"] }}
+            </a>
+            <a href="{{ url_for('admin.topics_list') }}"
+               class="btn btn-info btn-sm">
+                {{ t.edit_task["topics_list"] }}
+            </a>
+        {% endif %}
     </div>
+    {% endif %}
 
+    <!-- Фильтры -->
+    <form method="get" class="filters mb-4">
+        <div class="filters-inner">
+            <label>
+                {{ t.table["topic"] }}
+                <select name="topic" class="form-select form-select-sm">
+                    <option value="">{{ t["all_topics"] }}</option>
+                    {% for topic in topics %}
+                        <option value="{{ topic.name }}"
+                            {% if topic.name == current_topic %}selected{% endif %}>
+                            {{ topic.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
 
-    <h1>{{ t["tasks_list"] }}:</h1>
+            <input type="hidden" name="sort" value="{{ current_sort }}">
+            <input type="hidden" name="order" value="{{ current_order }}">
 
-    <form method="get" class="filters">
-        <label>
-            {{ t.table["topic"] }}: 
-            <select name="topic">
-                <option value="">{{ t["all_topics"] }}</option>
-                
-                {% for topic in topics %}
-                    <option value="{{ topic.name }}"
-                        {% if topic.name == current_topic %}selected{% endif %}>
-                        {{ topic.title }}
-                    </option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <input type="hidden" name="sort" value="{{ current_sort }}">
-        <input type="hidden" name="order" value="{{ current_order }}">
-
-        <button type="submit">
-            {{ t["apply"] }}
-        </button>
+            <button type="submit" class="btn btn-primary btn-sm">
+                {{ t["apply"] }}
+            </button>
+        </div>
     </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th><a href="{{ url_for('problems.problems_list', sort='id', order='asc' 
-                            if current_sort == 'id' and current_order == 'desc' 
-                            else 'desc', topic=current_topic) }}">
-                    {{ t.table["number"] }}
-                    {% if current_sort == 'id' %}
-                        {{ '↑' if current_order == 'asc' else '↓' }}
-                    {% endif %}                       
-                    </a>
-                </th>
-                <th>{{ t.table["task"] }}</th>
-                <th><a href="{{ url_for('problems.problems_list', sort='difficulty', order='asc' 
-                            if current_sort == 'difficulty' and current_order == 'desc' 
-                            else 'desc', topic=current_topic) }}">
-                    {{ t.table["difficulty"] }}
-                    {% if current_sort == 'difficulty' %}
-                        {{ '↑' if current_order == 'asc' else '↓' }}
-                    {% endif %}
-                    </a>
-                </th>
-                <th><a href="{{ url_for('problems.problems_list', sort='topic', order='asc' 
-                            if current_sort == 'topic' and current_order == 'desc' 
-                            else 'desc') }}">
-                    {{ t.table["topic"] }}
-                    {% if current_sort == 'topic' %}
-                        {{ '↑' if current_order == 'asc' else '↓' }}
-                    {% endif %}
-                    </a>
-                </th>
-                <th><a href="{{ url_for('problems.problems_list', sort='created_at', order='asc' 
-                            if current_sort == 'created_at' and current_order == 'desc' 
-                            else 'desc', topic=current_topic) }}">
-                    {{ t.table["created_at"] }}
-                    {% if current_sort == 'created_at' %}
-                        {{ '↑' if current_order == 'asc' else '↓' }}
-                    {% endif %}
-                    </a>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in tasks %}
+    <!-- Таблица -->
+    <div class="centered-table-wrapper">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td>{{ task.id }}</td>
-                    <td><a href="{{ url_for('problems.show_task', title=task.name) }}">{{ task.title }}</a></td>
-                    <td>{{ t["difficulty"] [task.difficulty_key] }}</td>               
-                    <td>{{ task.topic }}</td>
-                    <td>{{ task.created_at.date().strftime("%d.%m.%Y") }}</td>    
+                    <th>
+                        <a href="{{ url_for(
+                            'problems.problems_list',
+                            sort='id',
+                            order='asc' if current_sort == 'id' and current_order == 'desc' else 'desc',
+                            topic=current_topic
+                        ) }}">
+                            {{ t.table["number"] }}
+                            {% if current_sort == 'id' %}
+                                {{ '↑' if current_order == 'asc' else '↓' }}
+                            {% endif %}
+                        </a>
+                    </th>
+
+                    {% if edit_mode %}
+                        <th>Slug</th>
+                    {% endif %}
+
+                    <th>{{ t.table["task"] }}</th>
+
+                    <th>
+                        <a href="{{ url_for(
+                            'problems.problems_list',
+                            sort='difficulty',
+                            order='asc' if current_sort == 'difficulty' and current_order == 'desc' else 'desc',
+                            topic=current_topic
+                        ) }}">
+                            {{ t.table["difficulty"] }}
+                            {% if current_sort == 'difficulty' %}
+                                {{ '↑' if current_order == 'asc' else '↓' }}
+                            {% endif %}
+                        </a>
+                    </th>
+
+                    <th>
+                        <a href="{{ url_for(
+                            'problems.problems_list',
+                            sort='topic',
+                            order='asc' if current_sort == 'topic' and current_order == 'desc' else 'desc'
+                        ) }}">
+                            {{ t.table["topic"] }}
+                            {% if current_sort == 'topic' %}
+                                {{ '↑' if current_order == 'asc' else '↓' }}
+                            {% endif %}
+                        </a>
+                    </th>
+
+                    <th>
+                        <a href="{{ url_for(
+                            'problems.problems_list',
+                            sort='created_at',
+                            order='asc' if current_sort == 'created_at' and current_order == 'desc' else 'desc',
+                            topic=current_topic
+                        ) }}">
+                            {{ t.table["created_at"] }}
+                            {% if current_sort == 'created_at' %}
+                                {{ '↑' if current_order == 'asc' else '↓' }}
+                            {% endif %}
+                        </a>
+                    </th>
+
+                    {% if edit_mode %}
+                        <th>{{ t.edit_task["actions"] }}</th>
+                    {% endif %}
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+            </thead>
+
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>
+                        {{ task.id }}
+                        {% if g.user %}
+                            {% if task.id in solved_tasks_ids %}✔️{% endif %}
+                        {% endif %}
+                    </td>
+                
+                    {% if edit_mode %}
+                        <td>{{ task.name }}</td>
+                    {% endif %}
+
+                    <td>
+                        <a href="{{ url_for('problems.show_task', title=task.name) }}">
+                            {{ task.title }}
+                        </a>
+                    </td>
+
+                    <td>{{ t["difficulty"][task.difficulty_key] }}</td>
+                    <td>{{ task.topic }}</td>
+                    <td>{{ task.created_at.date().strftime("%d.%m.%Y") }}</td>
+
+                    {% if edit_mode %}
+                    <td>
+                        <a href="{{ url_for('admin.edit_task', task_id=task.id) }}"
+                           class="btn btn-sm btn-primary">
+                            {{ t.edit_task["edit"] }}
+                        </a>
+                        <a href="{{ url_for('admin.delete_task', task_id=task.id) }}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('{{ t["confirm_delete"] }}')">
+                            {{ t.edit_task["delete"] }}
+                        </a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
